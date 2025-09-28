@@ -396,3 +396,13 @@ class ReportGenerator:
         ]
         
         return miscompares[alert_columns]
+    
+    def create_visualizations(self, output_dir: str):
+        """
+        Create individual visualization files.
+        
+        Args:
+            output_dir (str): Directory to save visualization files
+        """
+        logger.info("Creating individual visualizations...")
+        return self.create_visualization_suite(output_dir)
