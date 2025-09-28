@@ -167,17 +167,24 @@ class UnitStatusAnalyzer:
     
     def load_locks_file(self, file_path: str) -> pd.DataFrame:
         """
-        Load and process the locks.csv file.
+        Load and process the locks file (CSV or Excel).
         
         Args:
-            file_path (str): Path to the locks.csv file
+            file_path (str): Path to the locks file (CSV or Excel)
             
         Returns:
             pd.DataFrame: Processed locks data
         """
         try:
             logger.info(f"Loading locks file: {file_path}")
-            df = pd.read_csv(file_path)
+            
+            # Check file extension to determine how to read it
+            if file_path.lower().endswith('.xlsx'):
+                df = pd.read_excel(file_path)
+                logger.info("Reading locks file as Excel format")
+            else:
+                df = pd.read_csv(file_path)
+                logger.info("Reading locks file as CSV format")
             
             # Validate required columns
             required_cols = ['Unit Number', 'Status']
@@ -195,7 +202,8 @@ class UnitStatusAnalyzer:
             if not invalid_statuses.empty:
                 logger.warning(f"Found invalid lock statuses: {invalid_statuses['Lock_Status'].unique()}")
             
-            logger.info(f"Loaded {len(df)} lock assignments from locks.csv")
+            file_type = "Excel" if file_path.lower().endswith('.xlsx') else "CSV"
+            logger.info(f"Loaded {len(df)} lock assignments from locks.{file_type.lower()}")
             return df[['Unit', 'Lock_Status']]
             
         except Exception as e:

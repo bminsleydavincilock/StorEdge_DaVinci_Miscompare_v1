@@ -84,9 +84,10 @@ python create_sample_data.py
 - **Column A**: `Unit` - Unit identifier (matches units.csv)
 - **Column S**: `Days Past Due` - Payment status (positive value = delinquent, empty/0 = current)
 
-### locks.csv
+### locks.csv or locks.xlsx
 - **Column C**: `Unit Number` - Unit identifier (matches units.csv)
 - **Column E**: `Status` - Lock status (Assigned Vacant, Tenant Using Lock, Assigned Overlock, Assigned Auction)
+- **Format**: Supports both CSV and Excel (.xlsx) formats
 
 ## 🎯 Analysis Logic
 

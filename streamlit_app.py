@@ -102,9 +102,14 @@ def create_download_link(data, filename, file_type="text/csv"):
     return href
 
 def validate_csv_file(file, expected_columns, file_name):
-    """Validate uploaded CSV file."""
+    """Validate uploaded CSV or Excel file."""
     try:
-        df = pd.read_csv(file)
+        # Check file extension to determine how to read it
+        if file.name.lower().endswith('.xlsx'):
+            df = pd.read_excel(file)
+        else:
+            df = pd.read_csv(file)
+        
         available_cols = [col.strip().strip('"') for col in df.columns]
         
         missing_cols = []
@@ -115,7 +120,8 @@ def validate_csv_file(file, expected_columns, file_name):
         if missing_cols:
             return False, f"Missing required columns in {file_name}: {missing_cols}"
         
-        return True, f"✅ {file_name} validated successfully ({len(df)} rows)"
+        file_type = "Excel" if file.name.lower().endswith('.xlsx') else "CSV"
+        return True, f"✅ {file_name} ({file_type}) validated successfully ({len(df)} rows)"
     
     except Exception as e:
         return False, f"Error reading {file_name}: {str(e)}"
@@ -152,9 +158,9 @@ def main():
         )
         
         locks_file = st.file_uploader(
-            "Upload Locks CSV",
-            type=['csv'], 
-            help="Lock assignments (Column C: Unit Number, Column E: Status)"
+            "Upload Locks File (CSV or Excel)",
+            type=['csv', 'xlsx'], 
+            help="Lock assignments (Column C: Unit Number, Column E: Status). Supports both CSV and Excel formats."
         )
         
         st.markdown("---")
@@ -246,6 +252,9 @@ def main():
                             f.write(rentroll_file.getbuffer())
                         
                         locks_file.seek(0)
+                        # Handle Excel files for locks
+                        if locks_file.name.lower().endswith('.xlsx'):
+                            temp_locks = os.path.join(temp_dir, 'locks.xlsx')
                         with open(temp_locks, 'wb') as f:
                             f.write(locks_file.getbuffer())
                         
@@ -463,9 +472,10 @@ def main():
         - Column A: `Unit` (unit identifier)
         - Column S: `Days Past Due` (payment status)
         
-        **Locks CSV:**
+        **Locks File (CSV or Excel):**
         - Column C: `Unit Number` (unit identifier)
         - Column E: `Status` (lock status)
+        - Supports both CSV and Excel (.xlsx) formats
         """)
         
         # Sample data section
@@ -484,12 +494,13 @@ def main():
             })
             st.dataframe(sample_rentroll)
             
-            st.markdown("**Sample Locks CSV:**")
+            st.markdown("**Sample Locks File (CSV or Excel):**")
             sample_locks = pd.DataFrame({
                 'Unit Number': ['A001', 'A002', 'A003'],
                 'Status': ['Tenant Using Lock', 'Assigned Vacant', 'Assigned Overlock']
             })
             st.dataframe(sample_locks)
+            st.markdown("*Note: This file can be uploaded as either CSV or Excel (.xlsx) format*")
 
 if __name__ == "__main__":
     main()
