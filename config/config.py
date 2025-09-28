@@ -1,5 +1,5 @@
 """
-Configuration file for the data science project
+Configuration file for StorEdge DaVinci Miscompare v1 project
 """
 
 import os
@@ -15,8 +15,8 @@ MODELS_DIR = PROJECT_ROOT / "src" / "models"
 NOTEBOOKS_DIR = PROJECT_ROOT / "notebooks"
 
 # Data file paths
-RAW_DATA_FILE = RAW_DATA_DIR / "raw_data.csv"
-PROCESSED_DATA_FILE = PROCESSED_DATA_DIR / "processed_data.csv"
+RAW_DATA_FILE = RAW_DATA_DIR / "storedge_davinci_miscompare_raw.csv"
+PROCESSED_DATA_FILE = PROCESSED_DATA_DIR / "storedge_davinci_miscompare_processed.csv"
 
 # Model configuration
 MODEL_CONFIG = {
