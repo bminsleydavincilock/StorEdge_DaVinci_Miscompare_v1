@@ -108,7 +108,20 @@ def validate_csv_file(file, expected_columns, file_name):
         if file.name.lower().endswith('.xlsx'):
             df = pd.read_excel(file)
         else:
-            df = pd.read_csv(file)
+            # Try different encodings for CSV files
+            encodings = ['utf-8', 'latin-1', 'cp1252', 'iso-8859-1']
+            df = None
+            
+            for encoding in encodings:
+                try:
+                    file.seek(0)  # Reset file pointer
+                    df = pd.read_csv(file, encoding=encoding)
+                    break
+                except UnicodeDecodeError:
+                    continue
+            
+            if df is None:
+                raise ValueError("Could not read CSV file with any supported encoding")
         
         available_cols = [col.strip().strip('"') for col in df.columns]
         

@@ -61,7 +61,21 @@ class UnitStatusAnalyzer:
         """
         try:
             logger.info(f"Loading units file: {file_path}")
-            df = pd.read_csv(file_path)
+            
+            # Try different encodings for CSV files
+            encodings = ['utf-8', 'latin-1', 'cp1252', 'iso-8859-1']
+            df = None
+            
+            for encoding in encodings:
+                try:
+                    df = pd.read_csv(file_path, encoding=encoding)
+                    logger.info(f"Successfully read units file with {encoding} encoding")
+                    break
+                except UnicodeDecodeError:
+                    continue
+            
+            if df is None:
+                raise ValueError("Could not read units file with any supported encoding")
             
             # Validate required columns
             required_cols = ['Unit', 'Status']
@@ -108,7 +122,21 @@ class UnitStatusAnalyzer:
         """
         try:
             logger.info(f"Loading rentroll file: {file_path}")
-            df = pd.read_csv(file_path)
+            
+            # Try different encodings for CSV files
+            encodings = ['utf-8', 'latin-1', 'cp1252', 'iso-8859-1']
+            df = None
+            
+            for encoding in encodings:
+                try:
+                    df = pd.read_csv(file_path, encoding=encoding)
+                    logger.info(f"Successfully read rentroll file with {encoding} encoding")
+                    break
+                except UnicodeDecodeError:
+                    continue
+            
+            if df is None:
+                raise ValueError("Could not read rentroll file with any supported encoding")
             
             # Validate required columns (handle different column name formats)
             required_cols = ['Unit', 'Days Past Due']
@@ -183,8 +211,20 @@ class UnitStatusAnalyzer:
                 df = pd.read_excel(file_path)
                 logger.info("Reading locks file as Excel format")
             else:
-                df = pd.read_csv(file_path)
-                logger.info("Reading locks file as CSV format")
+                # Try different encodings for CSV files
+                encodings = ['utf-8', 'latin-1', 'cp1252', 'iso-8859-1']
+                df = None
+                
+                for encoding in encodings:
+                    try:
+                        df = pd.read_csv(file_path, encoding=encoding)
+                        logger.info(f"Successfully read locks file with {encoding} encoding")
+                        break
+                    except UnicodeDecodeError:
+                        continue
+                
+                if df is None:
+                    raise ValueError("Could not read locks file with any supported encoding")
             
             # Validate required columns
             required_cols = ['Unit Number', 'Status']
