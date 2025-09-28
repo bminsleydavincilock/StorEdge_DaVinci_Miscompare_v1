@@ -80,6 +80,8 @@ st.markdown("""
 
 def create_download_link(data, filename, file_type="text/csv"):
     """Create a download link for data."""
+    href = ""  # Initialize href variable
+    
     if file_type == "text/csv":
         csv = data.to_csv(index=False)
         b64 = base64.b64encode(csv.encode()).decode()
@@ -87,6 +89,16 @@ def create_download_link(data, filename, file_type="text/csv"):
     elif file_type == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
         b64 = base64.b64encode(data).decode()
         href = f'<a href="data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,{b64}" download="{filename}">Download {filename}</a>'
+    elif file_type == "text/html":
+        b64 = base64.b64encode(data).decode()
+        href = f'<a href="data:text/html;base64,{b64}" download="{filename}">Download {filename}</a>'
+    elif file_type == "application/zip":
+        b64 = base64.b64encode(data).decode()
+        href = f'<a href="data:application/zip;base64,{b64}" download="{filename}">Download {filename}</a>'
+    else:
+        # Fallback for unknown file types
+        href = f'<span style="color: red;">Unsupported file type: {file_type}</span>'
+    
     return href
 
 def validate_csv_file(file, expected_columns, file_name):
